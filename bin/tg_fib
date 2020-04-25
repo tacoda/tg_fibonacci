@@ -2,22 +2,66 @@
 
 require_relative '../lib/fibonacci/fibonacci'
 
-number = ARGV.shift
+def help_cli
+    <<-END_OF_STRING
+    tg_fib              Compute fibonacci numbers
 
-if number
-    puts Fibonacci::Fibonacci.seq_string(number.to_i)
-else
+    Usage:
+    tg_fib help         Show this help menu
+    tg_fib [number]     Compute the fibonacci number
+    tg_fib              Enter interactive mode
+    END_OF_STRING
+end
+
+def help_interactive
+    <<-END_OF_STRING
+    Interactive help:
+
+    Commands:
+    (h)elp      Show this help menu
+    (q)uit      Quit the program
+
+    Usage:
+    Enter a non-negative integer to compute that fibonacci number.
+
+    Example:
+    > 5
+    # => fib(5) = 1, 1, 2, 3, 5, 8
+    END_OF_STRING
+end
+
+def repl
     loop do
-        puts "\nPlease enter your n to get fib(n) ('quit' to exit)"
+        puts "\nPlease enter a non-negative integer: (h)elp, (q)uit"
         print "> "
         command = gets.chomp.downcase
         case command
         when /^\d+$/
-            puts Fibonacci::Fibonacci.seq_string(command.to_i)
-        when 'quit', 'exit'
+            puts run(command)
+        when 'h', 'help'
+            puts help_interactive
+        when 'q', 'quit', 'exit'
             break
         else
-            puts "Please enter a number or 'quit'"
+            puts "Please enter a number or a valid command"
         end
     end
 end
+
+def run(number)
+    Fibonacci::Fibonacci.seq_string(Integer(number))
+end
+
+def start
+    argument = ARGV.shift
+    case argument
+    when 'help'
+        puts help_cli
+    when /^\d+$/
+        puts run(argument)
+    else
+        repl
+    end
+end
+
+start

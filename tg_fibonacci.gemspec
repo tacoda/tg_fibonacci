@@ -1,6 +1,6 @@
 Gem::Specification.new do |s| 
     s.name         = "tg_fibonacci"
-    s.version      = "1.0.1"
+    s.version      = "1.0.2"
     s.author       = "Ian Johnson"
     s.email        = "tacoda@pm.me"
     s.summary      = "Generate the fibonacci sequence"
