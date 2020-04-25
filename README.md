@@ -1,5 +1,7 @@
 # TG Fibonacci
 
+> Generate the Fibonacci sequence up to a given term number.
+
 [![Build Status](https://travis-ci.com/tacoda/tg_fibonacci.svg?branch=master)](https://travis-ci.com/tacoda/tg_fibonacci)
 
 ## Problem
