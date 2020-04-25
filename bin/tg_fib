@@ -1,0 +1,22 @@
+#!/usr/bin/env ruby
+
+require_relative '../lib/fibonacci/fibonacci'
+
+number = ARGV.shift
+
+if number
+    puts Fibonacci::Fibonacci.seq_string(number.to_i)
+else
+    loop do
+        puts "\nPlease enter your n to get fib(n) ('quit' to exit)"
+        command = gets.chomp.downcase
+        case command
+        when /^\d+$/
+            puts Fibonacci::Fibonacci.seq_string(command.to_i)
+        when 'quit', 'exit'
+            break
+        else
+            puts "Please enter a number or 'quit'"
+        end
+    end
+end
