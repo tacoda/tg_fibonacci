@@ -9,6 +9,7 @@ if number
 else
     loop do
         puts "\nPlease enter your n to get fib(n) ('quit' to exit)"
+        print "> "
         command = gets.chomp.downcase
         case command
         when /^\d+$/
