@@ -1,67 +1,95 @@
 #!/usr/bin/env ruby
 
+require 'io/console'
+require 'thor'
 require_relative '../lib/fibonacci/fibonacci'
 
-def help_cli
-    <<-END_OF_STRING
-    tg_fib              Compute fibonacci numbers
+class TgFib < Thor
+  desc "term N", "Compute fibonacci sequence up to the Nth term"
+  def term(n)
+    puts term_seq(n)
+  end
 
-    Usage:
-    tg_fib help         Show this help menu
-    tg_fib [number]     Compute the fibonacci number
-    tg_fib              Enter interactive mode
-    END_OF_STRING
-end
+  desc "max N", "Compute fibonacci sequence up to a maximum of N"
+  def max(n)
+    puts max_seq(n)
+  end
 
-def help_interactive
-    <<-END_OF_STRING
-    Interactive help:
-
-    Commands:
-    (h)elp      Show this help menu
-    (q)uit      Quit the program
-
-    Usage:
-    Enter a non-negative integer to compute that fibonacci number.
-
-    Example:
-    > 5
-    # => fib(5) = 1, 1, 2, 3, 5, 8
-    END_OF_STRING
-end
-
-def repl
+  desc "repl", "Run in a read-eval-print loop (default)"
+  def repl
     loop do
-        puts "\nPlease enter a non-negative integer: (h)elp, (q)uit"
-        print "> "
-        command = gets.chomp.downcase
-        case command
-        when /^\d+$/
-            puts run(command)
-        when 'h', 'help'
-            puts help_interactive
-        when 'q', 'quit', 'exit'
-            break
-        else
-            puts "Please enter a number or a valid command"
-        end
+      puts "\nPlease enter a command: (h)elp, (q)uit"
+      print "> "
+      command = STDIN.gets.chomp.downcase
+      case command
+      when /^m\s+\d+$/, /^max\s+\d+$/
+        puts max_seq(command.split(' ').last)
+      when /^t\s+\d+$/, /^term\s+\d+$/
+        puts term_seq(command.split(' ').last)
+      when 'h', 'help'
+        puts interactive_help
+      when 'q', 'quit', 'exit'
+        break
+      else
+        puts "Please a valid command"
+      end
     end
-end
+  end
 
-def run(number)
-    Fibonacci::Fibonacci.seq_string(Integer(number))
-end
+  default_task :repl
 
-def start
-    argument = ARGV.shift
-    case argument
-    when 'help'
-        puts help_cli
-    when /^\d+$/
-        puts run(argument)
-    else
-        repl
+  no_commands do
+    def sequence(number)
+      Fibonacci::Fibonacci.sequence(Integer(number))
     end
+
+    def upto(number)
+      Fibonacci::Fibonacci.upto(Integer(number))
+    end
+
+    def term_seq(number)
+      format(sequence(number))
+    end
+
+    def max_seq(number)
+      format(upto(number))
+    end
+
+    def format(sequence)
+      "{ #{sequence.join(', ')} }"
+    end
+
+    def interactive_help
+      <<~HELP
+      #{divider}
+      Interactive help:
+
+      Commands:
+      (h)elp      # Show this help menu
+      (q)uit      # Quit the program
+      (m)ax N     # Compute fibonacci sequence up to a maximum of N
+      (t)erm N    # Compute fibonacci sequence up to the Nth term"
+
+      Examples:
+      > max 6
+      # => { 1, 1, 2, 3, 5 }
+
+      > m 6
+      # => { 1, 1, 2, 3, 5 }
+
+      > term 6
+      # => { 1, 1, 2, 3, 5, 8 }
+
+      > t 6
+      # => { 1, 1, 2, 3, 5, 8 }
+      #{divider}
+      HELP
+    end
+
+    def divider
+      '=' * IO.console.winsize[1]
+    end
+  end
 end
 
-start
+TgFib.start(ARGV)
